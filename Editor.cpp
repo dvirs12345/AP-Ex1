@@ -3,7 +3,35 @@
 #include <string>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+#include <iostream>
 using namespace std;
+
+editor::editor()
+{
+    Document newdocument; 
+    this->myDocument = newdocument;
+}
+
+editor::editor(string filename)
+{
+    
+}
+
+bool editor::getFileContent(std::string fileName)
+{
+    std::ifstream in(fileName.c_str());
+    if(!in)
+        return false;
+
+    std::string str;
+    while (std::getline(in, str))
+        if(str.size() > 0)
+            this->myDocument.doc.push_back(str);
+            
+    in.close();
+    return true;
+}
 
 void editor::loop()
 {

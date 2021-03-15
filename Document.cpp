@@ -3,6 +3,18 @@
 #include <iostream>
 #include <fstream>
 
+Document::Document()
+{
+    std::vector<std::string> doc;
+    this->current=0;
+    this->doc = doc;
+}
+
+Document::Document(std::vector<std::string> doc)
+{
+    this->current = 0;
+    this->doc = doc;
+}
 
 void Document::numbermove(int num)
 {

@@ -9,13 +9,14 @@ class Document
     public:
 
         /* Variables */
-        
         std::vector<std::string> doc; // The document vector.
         int current; // The current place we are looking at in the vector. 
 
+        /* Constructors */
+        Document();
+        Document(std::vector<std::string> doc);
 
         /* Functions */
-
         void numbermove(int num);
 
         void plus(int num);
