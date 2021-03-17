@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <iostream>
+#include <regex>
 using namespace std;
 
 editor::editor()
@@ -15,7 +15,9 @@ editor::editor()
 
 editor::editor(string filename)
 {
-    
+    Document newdocument = Document(); 
+    this->myDocument = newdocument;
+    getFileContent(filename);
 }
 
 bool editor::getFileContent(std::string fileName)
@@ -25,67 +27,135 @@ bool editor::getFileContent(std::string fileName)
         return false;
 
     std::string str;
-    while (std::getline(in, str))
+    while(std::getline(in, str))
         if(str.size() > 0)
             this->myDocument.doc.push_back(str);
-            
+
     in.close();
     return true;
 }
 
 void editor::loop()
 {
-    std::string x;
-    std::cin >> x;
-
-    char first = x[0];
-    switch(first)
+    while(true)
     {
-        case '+':
-            break;
-        case '-':
-            break;
-        case '$':
-            break;
-        case 'a':
-            // if(len>1)
-            break;
-        case 'i':
-            // if(len>1)
-            break;
-        case '.':
-            break;
-        case 'c':
-            break;
-        case 'd':
-            // if(len>1)
-            break;
-        case '/':
-            break;
-        case 's':
-            // if(len>1)
-            break;
-        case 'j':
-            // if(len>1)
-            break;
-        case 'w':
-            // if(len>1)
-            break;
-        case 'q':
-            // if(len>1)
-            break;
-        default:
-            // if(number)
-            // else if (string)
-            // else
-            ;
+        std::string x;
+        std::cin >> x;
+
+        char first = x[0];
+        string withoutfirst = x.substr(1);
+        regex slash(R"/(.*)/");
+        regex sub(R"/(.*)/(.*)/");
+        regex filewrite("[w]\\s(.*)");
+        smatch mymatches;
+        switch(first)
+        {
+            case '+':
+                if(is_number(withoutfirst))
+                    this->myDocument.plus(stoi(withoutfirst));
+                else
+                    cout << "?" << endl;
+                break;
+
+            case '-':
+                if(is_number(withoutfirst))
+                    this->myDocument.minus(stoi(withoutfirst));
+                else
+                    cout << "?" << endl;
+                break;
+
+            case '$':
+                if(x.length() == 1)
+                    this->myDocument.dollar();
+                else 
+                    cout << "?" << endl;
+                break;
+
+            case 'a':
+                if(x.length() == 1)
+                    this->myDocument.ain();
+                else
+                    cout << "?" << endl;
+                break;
+
+            case 'i':
+                if(x.length() == 1)
+                    this->myDocument.iin();
+                else
+                    cout << "?" << endl;
+                break;
+
+            case 'c':
+                if(x.length() == 1)
+                    this->myDocument.cin1();
+                else
+                    cout << "?" << endl;
+                break;
+
+            case 'd':
+                if(x.length() == 1)
+                    this->myDocument.din();
+                else
+                    cout << "?" << endl;
+                break;
+
+            case '/':
+                if(regex_match(x, mymatches, slash))
+                    this->myDocument.slashtext(mymatches.str(1));
+                else
+                    cout << "?" << endl;
+                break;
+
+            case 's':
+                if(regex_match(x, mymatches, sub))
+                    this->myDocument.substitute(mymatches.str(1), mymatches.str(2));
+                else 
+                    cout << "?" << endl;
+                break;
+
+            case 'j':
+                if(x.length() == 1)
+                    this->myDocument.jin();
+                else 
+                    cout << "?" << endl;
+                break;
+
+            case 'w':
+                if(regex_match(x, mymatches, filewrite)) 
+                    this->myDocument.writetofile(mymatches.str(1));
+                else 
+                    cout << "?" << endl;
+                break;
+
+            case 'q':
+                if(x.length() == 1)
+                    this->myDocument.quit();
+                else
+                    cout << "?" << endl;
+                break;
+                
+            default:
+                if(is_number(x))
+                    this->myDocument.numbermove(stoi(x));
+                else
+                    cout << "?" << endl;
+                break;
+        }
     }
 }
-void handleLetters(char first, std::string x)
+bool editor::handleLetters(char first, std::string x)
 {
     if(x.length()>1)
     {
-        ;
+        this->myDocument.doc.push_back(x);
+        return true;
     }
+    return false;
 }
 
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}

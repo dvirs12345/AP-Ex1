@@ -17,6 +17,8 @@ class Document
         Document(std::vector<std::string> doc);
 
         /* Functions */
+        void addline(string line);
+
         void numbermove(int num);
 
         void plus(int num);

@@ -16,11 +16,15 @@ Document::Document(std::vector<std::string> doc)
     this->doc = doc;
 }
 
+void Document::addline(string line)
+{
+    ;
+}
+
 void Document::numbermove(int num)
 {
     if(this->doc.size() <= num || num == 0)
         cout << "?" << endl;
-    
     else
         this->current = num;
 }
@@ -50,7 +54,14 @@ void Document::dollar()
 
 void Document::ain()
 {
-    ;
+    string x;
+    cin >> x;
+
+    while(x.compare(".") != 0)
+    {
+        this->addline(x);
+        cin >> x;
+    }
 }
 
 void Document::iin()

@@ -18,9 +18,10 @@ class editor
 
         /* Functions */
         void loop();
-        void file_to_vector();
+        // void file_to_vector(std::string fileName);
 
     private:
-        void handleLetters(char first, std::string x);
+        bool handleLetters(char first, std::string x);
         bool getFileContent(std::string fileName);
+        bool is_number(const std::string& s);
 };

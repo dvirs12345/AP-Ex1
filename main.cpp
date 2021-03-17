@@ -13,7 +13,6 @@ int main(int argc, char* argv[])
 
         case 2: // If passed filename
             std::string filename(argv[1]);
-            //cout << filename << endl;
             myeditor = editor(filename);
             break;
     }
