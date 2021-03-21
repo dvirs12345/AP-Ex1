@@ -6,7 +6,7 @@
 Document::Document()
 {
     std::vector<std::string> doc;
-    this->current=0;
+    this->current = 0;
     this->doc = doc;
 }
 
@@ -18,12 +18,13 @@ Document::Document(std::vector<std::string> doc)
 
 void Document::addline(string line)
 {
-    ;
+    this->doc.emplace(this->doc.begin()+this->current,line);
+    this->current++;
 }
 
 void Document::numbermove(int num)
 {
-    if(this->doc.size() <= num || num == 0)
+    if((this->doc.size() <= num || num < 0) && num != 0)
         cout << "?" << endl;
     else
         this->current = num;
@@ -55,30 +56,51 @@ void Document::dollar()
 void Document::ain()
 {
     string x;
-    cin >> x;
-
+    getline(cin, x);
+    cout << this->current << endl;
     while(x.compare(".") != 0)
     {
-        this->addline(x);
-        cin >> x;
+        if(!x.empty())
+            this->addline(x);
+        getline(cin, x);
     }
 }
 
 void Document::iin()
 {
-    ;
+    string x;
+    getline(cin, x);
+
+    while(x.compare(".") != 0)
+    {
+        if(this->current == 0 && !x.empty())
+            this->addline(x);
+        else
+        {
+            if(this->current > 0)
+                this->current--;
+            if(!x.empty())
+                this->addline(x);
+        }
+        
+        this->current++;
+        getline(cin, x);
+    }
+
+    if(this->current>=this->doc.size())
+        this->current--;
 }
 
 void Document::cin1()
 {
-    ;
+    this->din();
+    this->ain();
 }
 
 void Document::din()
 {
     this->doc.erase(this->doc.begin() + this->current);
-    // What is the currnt place after removing?
-    //this->current-=1;
+    this->current--;
 }
 
 void Document::slashtext(string text)
@@ -86,7 +108,7 @@ void Document::slashtext(string text)
     bool flag = false;
     for(vector<string>::iterator nth = this->doc.begin() + this->current; nth != this->doc.end(); ++nth) // From current till the end
     {
-        if((*nth).compare(text) == 0)
+        if((*nth).find(text) != string::npos)
         {
             flag = true;
             current = nth-this->doc.begin();
@@ -98,7 +120,7 @@ void Document::slashtext(string text)
     {
         for(vector<string>::iterator nth = this->doc.begin(); nth != this->doc.begin() + this->current; ++nth)// From start to current
         {
-            if((*nth).compare(text) == 0)
+            if((*nth).find(text) != string::npos)
             {
                 flag = true;
                 this->current = nth-this->doc.begin();
@@ -110,8 +132,9 @@ void Document::slashtext(string text)
 
 void Document::substitute(string old, string newone)
 {
-    auto myindex = this->doc[this->current].find(old, 0);
-    this->doc[this->current].replace(myindex, old.length(), newone);        
+    // auto myindex = this->doc[this->current].find(old, 0);
+    newone = newone.substr(0, newone.size()-1);
+    this->doc.at(this->current).replace(this->doc.at(this->current).find(old), old.size(), newone);       
 }
 
 void Document::jin()
@@ -119,8 +142,8 @@ void Document::jin()
     string nextone = this->doc[this->current+1];
     this->doc[this->current] = this->doc[this->current] + " " + nextone; 
     // Remove the next row?!
-    // this->current+=1;
-    // this->din();
+    this->current++;
+    this->din();
 }
 
 void Document::writetofile(string filename)

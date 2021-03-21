@@ -4,7 +4,6 @@
 int main(int argc, char* argv[])
 {
     editor myeditor;
-    cout << argc << endl;
     switch (argc) 
     {
         case 1: // If no vars passed

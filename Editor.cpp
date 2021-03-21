@@ -28,9 +28,14 @@ bool editor::getFileContent(std::string fileName)
 
     std::string str;
     while(std::getline(in, str))
+    {
         if(str.size() > 0)
+        {
             this->myDocument.doc.push_back(str);
+        }
+    }
 
+    this->myDocument.dollar();
     in.close();
     return true;
 }
@@ -41,13 +46,12 @@ void editor::loop()
     {
         std::string x;
         std::cin >> x;
-
         char first = x[0];
-        string withoutfirst = x.substr(1);
-        regex slash(R"/(.*)/");
-        regex sub(R"/(.*)/(.*)/");
-        regex filewrite("[w]\\s(.*)");
-        smatch mymatches;
+        
+        string withoutfirst = x.substr(1, x.size());
+        string twowordsdivided;
+        string oldword;
+        string newWord;
         switch(first)
         {
             case '+':
@@ -100,17 +104,14 @@ void editor::loop()
                 break;
 
             case '/':
-                if(regex_match(x, mymatches, slash))
-                    this->myDocument.slashtext(mymatches.str(1));
-                else
-                    cout << "?" << endl;
+                this->myDocument.slashtext(x.substr(1, x.size()-2));
                 break;
 
             case 's':
-                if(regex_match(x, mymatches, sub))
-                    this->myDocument.substitute(mymatches.str(1), mymatches.str(2));
-                else 
-                    cout << "?" << endl;
+                twowordsdivided = x.substr(2, x.size()-2);
+                oldword = twowordsdivided.substr(0, twowordsdivided.find("/"));
+                newWord = twowordsdivided.substr(twowordsdivided.find("/")+1, twowordsdivided.size()-2);
+                this->myDocument.substitute(oldword, newWord);
                 break;
 
             case 'j':
@@ -121,10 +122,15 @@ void editor::loop()
                 break;
 
             case 'w':
-                if(regex_match(x, mymatches, filewrite)) 
-                    this->myDocument.writetofile(mymatches.str(1));
+                if(!x.empty())
+                {
+                    string name;
+                    cin >> name;
+                    this->myDocument.writetofile(name);
+                }
                 else 
                     cout << "?" << endl;
+                    
                 break;
 
             case 'q':
@@ -136,7 +142,7 @@ void editor::loop()
                 
             default:
                 if(is_number(x))
-                    this->myDocument.numbermove(stoi(x));
+                    this->myDocument.numbermove(stoi(x)-1);
                 else
                     cout << "?" << endl;
                 break;
@@ -153,7 +159,7 @@ bool editor::handleLetters(char first, std::string x)
     return false;
 }
 
-bool is_number(const std::string& s)
+bool editor::is_number(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
     while (it != s.end() && std::isdigit(*it)) ++it;
